@@ -94,7 +94,7 @@ jobs:
         if: github.event.inputs.KSUNEXT_ENABLED == 'true'
         run: |
           cd kernel_workspace/kernel_platform
-          curl -LSs "https://raw.githubusercontent.com/5ec1cff/KernelSU/refs/heads/main/kernel/setup.sh" | bash -
+          curl -LSs "https://raw.githubusercontent.com/ShirkNeko/KernelSU/susfs/kernel/setup.sh" | bash -s susfs
           cd KernelSU
           KSU_VERSION=$(git rev-list --count HEAD)
           echo "KSUVER=$((KSU_VERSION + 10200))" >> $GITHUB_ENV
@@ -109,21 +109,23 @@ jobs:
           cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
           cp -r ../susfs4ksu/kernel_patches/fs/* ./common/fs/
           cp -r ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
+          cp -r ../susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./KernelSU/
           cd common
-          patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || echo "Patch applied with conflicts, continuing..."
+          patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
           git add -A && git commit -a -m "Add SUSFS ${{ github.event.inputs.SUSFS_VERSION }} support" || echo "Nothing to commit"
           cd ../msm-kernel
           git add -A && git commit -a -m "Update for SUSFS" || echo "Nothing to commit"
-          cd ..
 
       - name: Apply mksu_susfs.patch
         if: github.event.inputs.SUSFS_ENABLED == 'true'
         run: |
           cd kernel_workspace/kernel_platform
-          curl -LSs "https://raw.githubusercontent.com/WildPlusKernel/kernel_patches/main/mksu_susfs.patch" -o mksu_susfs.patch
-          cd common
-          patch -p1 < ../../mksu_susfs.patch || echo "Patch conflicts detected, continuing with unresolved changes..."
-          git add -A && git commit -a -m "Apply mksu_susfs.patch" || echo "Nothing to commit"
+          cd /KernelSU
+          patch -p1 --forward < 10_enable_susfs_for_ksu.patch || true
+          patch -p1 < mksu_susfs_fix.patch || true
+          patch -p1 < nongki_fix.patch || true
+          chmod 777 fix_nongki.sh
+          ./fix_nongki.sh
           cd ..
 
       - name: Build kernel
