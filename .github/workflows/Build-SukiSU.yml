@@ -273,6 +273,16 @@ jobs:
             fi
           fi
           
+      - name: Patch Image File
+         run: |
+           echo "Patching Image file..."
+           cd "./kernel_workspace/kernel_platform/out/msm-kernel-${{ github.event.inputs.CPUD }}-gki/dist/"
+           curl -LSs "https://raw.githubusercontent.com/ShirkNeko/SukiSU_patch/refs/heads/main/kpm/patch_linux" -o patch
+           chmod 777 patch
+           ./patch
+           rm -rf Image
+           mv oImage Image
+          
       - name: Upload AnyKernel3
         uses: actions/upload-artifact@v4
         with:
