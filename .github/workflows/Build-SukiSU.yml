@@ -169,7 +169,10 @@ jobs:
           cd kernel_workspace/kernel_platform
           # Add KSU configuration settings
           echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KPM=y" >> ./common/arch/arm64/configs/gki_defconfig
+          
+          if [[ "${{ github.event.inputs.kernelsu_variant }}" == "SukiSU-Ultra" ]]; then
+            echo "CONFIG_KPM=y" >> ./common/arch/arm64/configs/gki_defconfig
+          fi
 
           # Add VFS configuration settings
           if [[ "${{ github.event.inputs.VFS_patch_ENABLED }}" == 'enable' ]]; then
@@ -249,6 +252,7 @@ jobs:
           fi
 
       - name: Apply patch_linux and replace Image
+        if: ${{ github.event.inputs.kernelsu_variant == 'SukiSU-Ultra' }}
         run: |
           cd kernel_workspace/kernel_platform/out/msm-kernel-${{ github.event.inputs.CPUD }}-gki/dist
           curl -LO https://github.com/ShirkNeko/SukiSU_KernelPatch_patch/releases/download/0.11-beta/patch_linux
