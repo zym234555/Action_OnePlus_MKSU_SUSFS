@@ -154,11 +154,6 @@ jobs:
           patch -p1 -F 3 < syscall_hooks.patch
           echo "完成"
 
-          #if [ "${{ github.event.inputs.KERNEL_VERSION }}" != "5.10" ]; then
-          #  cp ../../SukiSU_patch/other/lz4k_patch/${{ github.event.inputs.KERNEL_VERSION }}/lz4kd.patch ./
-          #  patch -p1 -F 3 < lz4kd.patch || true
-          #fi
-
       - name: Add SUSFS Configuration Settings
         run: |
           cd kernel_workspace/kernel_platform
