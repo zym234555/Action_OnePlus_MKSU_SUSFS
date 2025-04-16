@@ -294,9 +294,11 @@ jobs:
           ./patch_linux
           rm -f Image
           mv oImage Image
+
+      - name: Reproduction of documents
+        run: |
           cp Image $GITHUB_WORKSPACE/AnyKernel3/Image
           cp Image $GITHUB_WORKSPACE/kernel_workspace/kernel
-         
          
       - name: Upload AnyKernel3
         uses: actions/upload-artifact@v4
