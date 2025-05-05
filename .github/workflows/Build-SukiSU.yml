@@ -298,7 +298,7 @@ jobs:
 
 
             if [ "${{ github.event.inputs.KERNEL_VERSION }}" != "6.6" ] && [ "${{ github.event.inputs.KERNEL_VERSION }}" != "5.10" ]; then
-              if [ "${{ github.event.inputs.KERNEL_VERSION }}" != "5.15" ]
+              if [ "${{ github.event.inputs.KERNEL_VERSION }}" != "5.15" ]; then
                 sed -i 's/CONFIG_MODULE_SIG=y/CONFIG_MODULE_SIG=n/g' "$CONFIG_FILE"
               fi
               if grep -q "CONFIG_ZSMALLOC" -- "$CONFIG_FILE"; then
