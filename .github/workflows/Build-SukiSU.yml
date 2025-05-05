@@ -317,7 +317,7 @@ jobs:
             if [ "${{ github.event.inputs.ANDROID_VERSION }}" = "android14" ] || [ "${{ github.event.inputs.ANDROID_VERSION }}" = "android15" ]; then
               if [  -e ./common/modules.bzl ]; then
                 sed -i 's/"drivers\/block\/zram\/zram\.ko",//g; s/"mm\/zsmalloc\.ko",//g' "./common/modules.bzl"
-              if
+              fi
               echo "CONFIG_MODULE_SIG_FORCE=n" >> "$CONFIG_FILE"
             fi
 
