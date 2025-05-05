@@ -227,12 +227,12 @@ jobs:
       - name: Apply LZ4KD&ZSTDN
         run: |
           if [ "${{ github.event.inputs.ZRAM }}" = "true" ]; then
-            cp ../../SukiSU_patch/other/zram/zram_patch/${{ inputs.kernel_version }}/lz4kd.patch ./
+            cp ../../SukiSU_patch/other/zram/zram_patch/${{ github.event.inputs.KERNEL_VERSION }}/lz4kd.patch ./
             echo "正在打lz4kd补丁"
             patch -p1 -F 3 < lz4kd.patch || true
             echo '完成LZ4KD补丁'
 
-            cp ../../SukiSU_patch/other/zram/zram_patch/${{ inputs.kernel_version }}/zstdn.patch ./
+            cp ../../SukiSU_patch/other/zram/zram_patch/${{ github.event.inputs.KERNEL_VERSION }}/zstdn.patch ./
             echo "正在打zstdn补丁"
             patch -p1 -F 3 < zstdn.patch || true
             echo '完成ZSTDN补丁'
@@ -287,7 +287,7 @@ jobs:
           if [ "${{ github.event.inputs.ZRAM }}" = "true" ]; then
           CONFIG_FILE=./common/arch/arm64/configs/gki_defconfig
 
-             if [ "${{ inputs.kernel_version }}" = "5.10" ]; then
+            if [ "${{ github.event.inputs.KERNEL_VERSION }}" = "5.10" ]; then
               echo "CONFIG_ZSMALLOC=y" >> "$CONFIG_FILE"
               echo "CONFIG_ZRAM=y" >> "$CONFIG_FILE"
               echo "CONFIG_MODULE_SIG=n" >> "$CONFIG_FILE"
@@ -296,11 +296,10 @@ jobs:
             fi
 
 
-            if [ "${{ inputs.kernel_version }}" != "6.6" ] && [ "${{ inputs.kernel_version }}" != "5.10" ]; then
-              if [ "${{ inputs.kernel_version }}" != "5.15" ]
+            if [ "${{ github.event.inputs.KERNEL_VERSION }}" != "6.6" ] && [ "${{ github.event.inputs.KERNEL_VERSION }}" != "5.10" ]; then
+              if [ "${{ github.event.inputs.KERNEL_VERSION }}" != "5.15" ]
                 sed -i 's/CONFIG_MODULE_SIG=y/CONFIG_MODULE_SIG=n/g' "$CONFIG_FILE"
               fi
-
               if grep -q "CONFIG_ZSMALLOC" -- "$CONFIG_FILE"; then
                 sed -i 's/CONFIG_ZSMALLOC=m/CONFIG_ZSMALLOC=y/g' "$CONFIG_FILE"
               else
@@ -309,14 +308,15 @@ jobs:
               sed -i 's/CONFIG_ZRAM=m/CONFIG_ZRAM=y/g' "$CONFIG_FILE"
             fi
 
-            if [ "${{ inputs.kernel_version }}" = "6.6" ]; then
+            if [ "${{ github.event.inputs.KERNEL_VERSION }}" = "6.6" ]; then
               echo "CONFIG_ZSMALLOC=y" >> "$CONFIG_FILE"
               sed -i 's/CONFIG_ZRAM=m/CONFIG_ZRAM=y/g' "$CONFIG_FILE"
             fi
 
             if [ "${{ github.event.inputs.ANDROID_VERSION }}" = "android14" ] || [ "${{ github.event.inputs.ANDROID_VERSION }}" = "android15" ]; then
               if [  -e ./common/modules.bzl ]; then
-              sed -i 's/"drivers\/block\/zram\/zram\.ko",//g; s/"mm\/zsmalloc\.ko",//g' "./common/modules.bzl"
+                sed -i 's/"drivers\/block\/zram\/zram\.ko",//g; s/"mm\/zsmalloc\.ko",//g' "./common/modules.bzl"
+              if
               echo "CONFIG_MODULE_SIG_FORCE=n" >> "$CONFIG_FILE"
             fi
 
