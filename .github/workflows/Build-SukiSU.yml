@@ -83,9 +83,9 @@ on:
           - perf
       SUSFS_CI:
         type: boolean
-        description: "SUSFS模块下载是否调用CI？"
+        description: "下载SUSFS模块是否使用CI构建？"
         required: true
-        default: false
+        default: true
       VFS:
         type: boolean
         description: "是否启用手动钩子？"
